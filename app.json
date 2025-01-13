@@ -1,21 +1,23 @@
 {
   "expo": {
-    "name": "react_native_job_platform",
-    "slug": "react_native_job_platform",
+    "name": "Joble",
+    "slug": "Joble",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "Joble",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "package": "com.videorn"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.videorn"
     },
     "web": {
       "bundler": "metro",
