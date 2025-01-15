@@ -1,19 +1,32 @@
 import { StatusBar } from "expo-status-bar";
-import { FlatList, Image, Text, View } from "react-native";
+import { useState } from "react";
+import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import SearchInput from "../../components/SearchInput";
-import { images } from "../../constants";
-import Trending from "../../components/Trending";
 import EmptyState from "../../components/EmptyState";
+import SearchInput from "../../components/SearchInput";
+import Trending from "../../components/Trending";
+import VideoCard from "../../components/VideoCard";
+import { images } from "../../constants";
+import { getLatestVideos, getVideos } from "../../lib/appwrite";
+import useAppwrite from "../../lib/useAppwrite";
 const home = () => {
+  const [refreshing, setrefreshing] = useState(false);
+  const { data: videoData, refetch, loading } = useAppwrite(getVideos);
+  const { data: LatestData } = useAppwrite(getLatestVideos);
+ 
+
+  const onRefresh = async () => {
+    setrefreshing(true);
+    await refetch();
+    setrefreshing(false);
+  };
+
   return (
-    <SafeAreaView className="bg-primary">
+    <SafeAreaView className="bg-primary  h-screen">
       <FlatList
-        data={[]}
+        data={videoData}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => (
-          <Text className="text-3xl text-white">{item.id}</Text>
-        )}
+        renderItem={({ item }) => <VideoCard  video={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6 ">
             <View className="justify-between flex flex-row mb-6 items-center">
@@ -35,14 +48,24 @@ const home = () => {
             </View>
             <SearchInput />
             <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-gray-300 font-pregular mb-3">Latest Videos</Text>
-              <Trending posts={[{ id: 1 },{ id: 1 },{ id: 1 },{ id: 1 }] ?? []}/>
+              <Text className="text-gray-300 font-pregular mb-3">
+                Latest Videos
+              </Text>
+              <Trending
+                posts={LatestData}
+              />
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
-          <EmptyState title="No videos found" subtitle="Try searching for something else"/>
+          <EmptyState
+            title="No videos found"
+            subtitle="Try searching for something else"
+          />
         )}
+        refreshControl={
+          <RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+        }
       />
       <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>

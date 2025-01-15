@@ -26,7 +26,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
   );
 };
 
-const TabsLayout = () => {
+const SearchLayout = () => {
   return (
     <>
       <Tabs
@@ -109,4 +109,4 @@ const TabsLayout = () => {
     </>
   );
 };
-export default TabsLayout;
+export default SearchLayout;
