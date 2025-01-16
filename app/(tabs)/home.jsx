@@ -7,13 +7,14 @@ import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
+import { useGlobalContext } from "../../context/GlobalProvider";
 import { getLatestVideos, getVideos } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
 const home = () => {
   const [refreshing, setrefreshing] = useState(false);
-  const { data: videoData, refetch, loading } = useAppwrite(getVideos);
+  const { data: videoData, refetch } = useAppwrite(getVideos);
   const { data: LatestData } = useAppwrite(getLatestVideos);
- 
+  const { user } = useGlobalContext();
 
   const onRefresh = async () => {
     setrefreshing(true);
@@ -26,7 +27,7 @@ const home = () => {
       <FlatList
         data={videoData}
         keyExtractor={(item) => item.$id}
-        renderItem={({ item }) => <VideoCard  video={item} />}
+        renderItem={({ item }) => <VideoCard video={item} />}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6 ">
             <View className="justify-between flex flex-row mb-6 items-center">
@@ -35,7 +36,7 @@ const home = () => {
                   Welcome back
                 </Text>
                 <Text className="font-semibold text-white text-2xl">
-                  John Doe
+                  {user?.documents?.[0].username}
                 </Text>
               </View>
               <View className="mt-1.5">
@@ -51,9 +52,7 @@ const home = () => {
               <Text className="text-gray-300 font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending
-                posts={LatestData}
-              />
+              <Trending posts={LatestData} />
             </View>
           </View>
         )}

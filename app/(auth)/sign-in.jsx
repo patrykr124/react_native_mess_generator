@@ -5,7 +5,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { images } from "../../constants";
-import { signInApp } from "../../lib/appwrite";
+import { getCurrentUser, signInApp } from "../../lib/appwrite";
+import { useGlobalContext } from "../../context/GlobalProvider";
 const signIn = () => {
   const [form, setForm] = useState({
     email: "",
@@ -13,7 +14,7 @@ const signIn = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const {setuser} = useGlobalContext();
   const submit = async () => {
     if (!form.email || !form.password) {
       Alert.alert("Please fill in all fields");
@@ -21,7 +22,9 @@ const signIn = () => {
     setIsSubmitting(true);
     try {
       await signInApp(form.email, form.password);
-      router.push("/home");
+      const result = await getCurrentUser();
+      setuser(result);
+      router.replace("/home");
       console.log("Log In!!!", form.email, form.password);
     } catch (error) {
       console.log(error);

@@ -6,11 +6,13 @@ const VideoCard = ({
   video: {
     title,
     thumbnail,
-    creator: { username, avatar },
+    creator,
     video,
   },
 }) => {
   const [play, setPlay] = useState(false);
+  const { username = "Unknown", avatar = icons.defaultAvatar } = creator || {};
+
   return (
     <View className="flex-col items-center px-4 mb-14">
       <View className="flex-row gap-3 items-start">
@@ -33,7 +35,7 @@ const VideoCard = ({
               className="text-xs text-gray-100 font-pregular"
               numberOfLines={1}
             >
-              {username}
+                {username}
             </Text>
           </View>
         </View>

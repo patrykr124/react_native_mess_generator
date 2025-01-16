@@ -1,23 +1,41 @@
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
 import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
 import { useGlobalContext } from "../../context/GlobalProvider";
-import { getUserVideo } from "../../lib/appwrite";
+import { getUserVideo, logOut } from "../../lib/appwrite";
 import useAppwrite from "../../lib/useAppwrite";
 
 const profile = () => {
-  const { user, setuser, isLoading, setIsLoading } = useGlobalContext();
+  const { user, setuser, isLoading, setisLoading, setIsLoggedIn } =
+    useGlobalContext();
 
   const { data: userData } = useAppwrite(() =>
-    getUserVideo(user.documents[0].$id)
+    getUserVideo(user?.documents?.[0].$id || user.$id)
   );
 
-  function logOut() {
-    setuser({});
+
+
+  async function handleLogOut() {
+    try {
+      await logOut();
+      setuser(null);
+      setIsLoggedIn(false);
+      router.replace("/sign-in");
+      console.log("logOut");
+    } catch (error) {
+      console.log("logOut", error);
+    }
   }
 
   return (
@@ -35,10 +53,13 @@ const profile = () => {
               marginBottom: "20",
               marginTop: "20",
               paddingHorizontal: "10",
+              borderBottomWidth: 1,
+              borderBottomColor: "rgba(255, 255, 255, 0.1)",
+              paddingBottom: "20",
             }}
           >
             <TouchableOpacity
-              onPress={logOut}
+              onPress={handleLogOut}
               style={{
                 width: "100%",
                 alignItems: "flex-end",
@@ -68,20 +89,26 @@ const profile = () => {
             </View>
             <InfoBox
               title={user?.username}
-              containStyle="mt-5"
+              containStyle=""
               titleStyle="text-lg"
             />
-            <View className="mt-5 flex-row">
+            <View
+              style={{
+                marginTop: "5",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "40",
+              }}
+            >
               <InfoBox
-                title={user?.username}
-                containStyle="mt-5"
-                titleStyle="text-lg"
+                title={userData.length || 0}
+                subtitle="Posts"
+                containStyle="mr-20"
+                titleStyle="text-xl"
               />
-               <InfoBox
-                title={user?.username}
-                containStyle="mt-5"
-                titleStyle="text-lg"
-              />
+              <InfoBox title="1.2k" subtitle="Followers" titleStyle="text-xl" />
             </View>
           </View>
         )}

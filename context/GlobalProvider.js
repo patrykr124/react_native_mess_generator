@@ -17,7 +17,7 @@ const GlobalProvider = ({ children }) => {
           setuser(res);
         } else {
           setIsLoggedIn(false);
-          setuser(null);
+          setuser(false);
         }
       })
       .catch((err) => {
